@@ -52,6 +52,15 @@ func FindUserByUsername(username string) (User, error) {
 	return user, nil
 }
 
+func FindUserById(id string) (User, error) {
+	var user User
+	err := Database.Database.Where("id = ?", id).First(&user).Error
+	if err != nil {
+		return User{}, err
+	}
+	return user, nil
+}
+
 func GetRole(id int) string {
 	var user User
 	Database.Database.First(&user, id)

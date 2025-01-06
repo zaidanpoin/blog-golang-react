@@ -3,32 +3,26 @@ package Router
 import (
 	"fmt"
 
-	"github.com/zaidanpoin/blog-go/Controller"
-	"github.com/zaidanpoin/blog-go/Middleware"
-
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
 func ServeApps() {
 	router := gin.Default()
 
-	authRoutes := router.Group("/auth")
+	router.Use(cors.Default())
+	router.Static("/uploads", "./uploads")
+	apiRoutes := router.Group("/api/v1")
 	{
-		AuthRoutes(authRoutes)
-	}
 
-	router.GET("/user", Middleware.UserMiddleware(), func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "Hello World",
-		})
-	})
+		PostRoutes(apiRoutes)
+
+		auth := apiRoutes.Group("/auth")
+		{
+			AuthRoutes(auth)
+		}
+	}
 
 	router.Run(":8080")
 	fmt.Println("Server is running on port 8080")
-}
-
-func AuthRoutes(router *gin.RouterGroup) {
-	router.POST("/register", Controller.Register)
-
-	router.POST("/login", Controller.Login)
 }
