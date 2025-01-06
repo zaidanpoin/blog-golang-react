@@ -71,6 +71,7 @@ func Login(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
 	context.Writer.Header().Set("Authorization", "Bearer "+jwt)
 	context.JSON(http.StatusOK, gin.H{"message": "Login success", "token": jwt})
 }

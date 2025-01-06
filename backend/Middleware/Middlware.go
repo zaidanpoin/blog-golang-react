@@ -47,6 +47,36 @@ func RoleMiddleware(role string) gin.HandlerFunc {
 	}
 }
 
+func CheckLogin() gin.HandlerFunc {
+
+	return func(c *gin.Context) {
+		// Ambil token dari header Authorization
+		tokenString := c.GetHeader("Authorization")
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+		// Parse token
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return privateKey, nil
+		})
+
+		if err != nil {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Invalid or expired token"})
+			c.Abort()
+			return
+		}
+
+		// Validasi klaim token
+		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			c.Set("user_id", claims["id"]) // Set user_id ke context
+			c.Next()                       // Lanjutkan ke handler berikutnya
+		} else {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Invalid token claims"})
+			c.Abort()
+		}
+	}
+
+}
+
 func AdminMiddleware() gin.HandlerFunc {
 	return RoleMiddleware("Admin")
 }

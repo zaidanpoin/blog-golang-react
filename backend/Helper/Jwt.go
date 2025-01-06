@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -15,6 +16,7 @@ var privateKey = []byte(os.Getenv("JWT_PRIVATE_KEY"))
 
 func GenerateJWT(user Model.User) (string, error) {
 	tokenTTL, _ := strconv.Atoi(os.Getenv("TOKEN_TTL"))
+	fmt.Println(tokenTTL)
 	claims := jwt.MapClaims{
 		"id":   user.ID,
 		"role": user.Role,

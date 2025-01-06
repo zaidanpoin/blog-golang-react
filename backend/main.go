@@ -32,6 +32,7 @@ func loadDatabase() {
 	models := []interface{}{
 		&Model.User{},
 		&Model.Post{},
+		&Model.Category{},
 	}
 
 	for _, model := range models {
